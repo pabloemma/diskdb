@@ -1,0 +1,72 @@
+
+{
+
+    "Linux" : {
+        "topdir" : "/home/klein/git/diskdb/",
+        "srcdir" : "src/",
+        "datadir" : "data/",
+        "logdir" : "log/",
+        "conf_dir" : "config/",
+        "doc_dir"     : "doc/"
+
+    },
+    "Darwin" : {
+        "topdir" : "/Users/klein/git/diskdb/",
+         "srcdir" : "src/",
+        "datadir" : "data/",
+        "logdir" : "log/",
+        "conf_dir" : "config/",
+        "doc_dir"     : "doc/"
+   },
+    "Control" : {
+         "debug"   : false,
+        "cryptofile" : "pw.txt",
+        "db_name" :"disk",
+        "db_user" :"klein",
+        "db_system" : "QPSQL",
+        "db_address":"192.168.2.230",
+        "ingred_table" : "disk_table"
+     },
+
+    "disk_table" : {
+        "column"  : ["disk_id","SERIAL","PRIMARY KEY",
+                    "disk_name","VARCHAR[40]","NOT NULL",
+                    "filesystem","VARCHAR[5]","NOT NULL",
+                    "size","BIGINT","NOT NULL",
+                    "used","BIGINT","NOT NULL",
+                    "free","BIGINT","NOT NULL"
+                    ]
+    
+
+    },
+
+    "directory_table" : {
+        "column" : ["ID","SERIAL","PRIMARY KEY",
+                    "disk_id","INTEGER","REFERENCES disk_table(disk_id)",
+                    "directory","VARCHAR[80]","NOT NULL",
+                    "level","SMALLINT","NOT NULL"
+                    ]
+    },
+
+    "file_table" : {
+        "column" : ["ID","SERIAL","PRIMARY KEY",
+                    "dir_id","INTEGER","REFERENCES directory_table(ID)",
+                    "file_name","VARCHAR[100]","NOT NULL",
+                    "size of file","BIGINT","NOT NULL"
+
+                    ]
+                },
+
+     "logging" : {
+        "loglevel" : "INFO",
+        "output"   : "info.log",
+        "log_conf_file" : "logger.json"
+        },
+    "graphics": {
+        "ingredients_suppress_columns" : ["sugar","sortion_size","saturated","fiber","salt","sodium","product_source","portion_size"],
+        "swiss_food_suppress_columns" : ["sugar","salt"],
+        "recipes_suppress_columns" : ["sugar","portions","description","saturated_fat","fiber","salt","sodium","ingredients","time","images","vegetarian"]
+
+    }
+}
+
