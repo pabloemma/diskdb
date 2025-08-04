@@ -127,13 +127,22 @@ class MY_DB(object):
         self.MyCurs.execute(sql_command_new)
 
 
+    def create_columns(self,conf_column = None):
+        """this takes the json columns and form it again into lists for the create Table"""
+        #conf_column = self.CD.disk_table
+        temp_column = []
+        a = []
+        for k in range(0,len(conf_column)-1,3):
+            a= conf_column[k], conf_column[k+1], conf_column[k+2]
+            temp_column.append(a)
 
-
+        return temp_column
 
     def delete_db(self,db_name = None):
 
-        stat = '''DROP DATABASE IF EXISTS '''+db_name
+        stat = '''DROP DATABASE IF EXISTS '''+db_name 
         logger.warning("You are deleting database %s" % db_name)
+        #self.MyCurs.close()
         self.MyCurs.execute(stat)
         return
 
@@ -165,6 +174,7 @@ class MY_DB(object):
         """instantiates and starts all the config stuff"""
 
         logger.info("starting up system")
+        self.CD=CD.MyConfig('/Users/klein/git/diskdb/config/config_disk_db.json')
 
 
 
@@ -173,7 +183,8 @@ class MY_DB(object):
 if __name__ == "__main__":
     db_name = 'disk'
     test = MY_DB(db_name = db_name,db_user = 'klein',db_pwd = '?Pa!blo?solveig',db_host = '192.168.2.230' , db_system = 'PSQL')
-    test.connect_db()
+    #test.connect_db()
+    test.create_columns()
     #test.create_db(db_name = 'disk',db_user = 'klein')
 
     columns=[['disk_id',
@@ -189,7 +200,7 @@ if __name__ == "__main__":
     
     #columns1=[['disk_test2','varchar[30]',''],['name2','varchar[40]','NOT NULL'],['size2','NUMERIC','']]
     
-    test.create_table('disk_table',columns=columns)
+    #test.create_table('disk_table',columns=columns)
     #test.add_columns(table_name='disk_table',columns=columns1)
     #test.delete_db(db_name = 'disk')
 
