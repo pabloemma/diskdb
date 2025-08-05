@@ -4,6 +4,7 @@
 
 import sys
 import psycopg as PG
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from loguru import logger
 import config_disk_db as CD
 
@@ -63,14 +64,23 @@ class MY_DB(object):
 
 
 
+        try:
+            MyConn = PG.connect(dbname = self.db_name, password = self.db_pwd , user = self.db_user , host = self.db_host)
+            self.MyCurs = MyCurs = MyConn.cursor()
 
-        MyConn = PG.connect(dbname = self.db_name, password = self.db_pwd , user = self.db_user , host = self.db_host)
+        except:
+            MyConn = PG.connect( password = self.db_pwd , user = self.db_user , host = self.db_host)
         #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!important!!!!!!!!!!!!!!!!
         # to get rid of the "cannot run in a transaction block"
-        MyConn.autocommit = True
+            ISOLATION_LEVEL_AUTOCOMMIT = True #contary to AI; needs to be set to True
+            MyConn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+            MyConn.autocommit = True
 
+            self.MyCurs = MyCurs = MyConn.cursor()
+
+            self.MyCurs.execute(f"CREATE DATABASE {self.db_name};")
+        
         # check if database exists:
-        self.MyCurs = MyCurs = MyConn.cursor()
 
         stat =  '''select exists(SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower(\''''+self.db_name+'\'))''';
 
@@ -129,9 +139,11 @@ class MY_DB(object):
 
     def create_columns(self,conf_column = None):
         """this takes the json columns and form it again into lists for the create Table"""
-        #conf_column = self.CD.disk_table
+        conf_column = self.CD.disk_table
         temp_column = []
+
         a = []
+
         for k in range(0,len(conf_column)-1,3):
             a= conf_column[k], conf_column[k+1], conf_column[k+2]
             temp_column.append(a)
@@ -183,7 +195,7 @@ class MY_DB(object):
 if __name__ == "__main__":
     db_name = 'disk'
     test = MY_DB(db_name = db_name,db_user = 'klein',db_pwd = '?Pa!blo?solveig',db_host = '192.168.2.230' , db_system = 'PSQL')
-    #test.connect_db()
+    test.connect_db()
     test.create_columns()
     #test.create_db(db_name = 'disk',db_user = 'klein')
 
