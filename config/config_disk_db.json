@@ -52,7 +52,7 @@
         "column" : ["ID","SERIAL","PRIMARY KEY",
                     "dir_id","INTEGER","REFERENCES directory_table(ID)",
                     "file_name","VARCHAR[100]","NOT NULL",
-                    "size of file","BIGINT","NOT NULL"
+                    "size_of_file","BIGINT","NOT NULL"
 
                     ]
                 },
