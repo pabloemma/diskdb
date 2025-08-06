@@ -32,8 +32,7 @@ class MyConfig():
        
         
         # Open config file
-        #print('Directory Name:     ', os.path.dirname(config_file))
-       
+      
 
         if os.path.exists(config_file) :
             self.ReadJson(config_file)
@@ -91,6 +90,7 @@ class MyConfig():
         self.db_address = jsondict["Control"]["db_address"]
         #currently only QPSQL is supported
         self.db_system = jsondict["Control"]["db_system"]
+        self.max_depth = int(jsondict["ops"]["max_depth"])
         # the next two vaiables are only used if we run in "both" mode
             #test if first key is working
         self.ingred_table = jsondict["Control"]["ingred_table"] #choices are currently ingredients or swiss_food

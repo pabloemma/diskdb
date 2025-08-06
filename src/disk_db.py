@@ -7,6 +7,8 @@ import psycopg as PG
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from loguru import logger
 import config_disk_db as CD
+import disk_info as DI
+
 
 class MY_DB(object):
     def __init__(self,Title =  None,db_name = None, db_user = None, db_pwd = None, db_system = None , db_host = None, config_file = None):
@@ -190,13 +192,40 @@ class MY_DB(object):
         logger.level("DEBUG",color = '<blue>')
  
         return
-       
+    
+    def find_drives(self):
+        """this calls the find_drives ind disk info"""
+
+        self.DI.find_drives()
+
+        logger.info('external drives %s ' % self.DI.external_drives)
+        
+        return
+
+    def get_directories(self):
+        a = self.DI.get_dir_entries(path=k)
+        
+        return
+    
+    def get_all_dirs(self,path):
+        """finds all directories and file to max_depth"""
+
+        max_depth = self.DI.max_depth
+        myroot,dir_list,files = self.DI.find_all_dirs(path=path,max_depth=max_depth)
+        return
+    
 
     def SetupSystem(self):
         """instantiates and starts all the config stuff"""
 
-        logger.info("starting up system")
-        self.CD=CD.MyConfig('/Users/klein/git/diskdb/config/config_disk_db.json')
+        logger.info('starting up system')
+
+        # first get configuration
+        self.CD = CD.MyConfig('/Users/klein/git/diskdb/config/config_disk_db.json')
+
+        #instantiate the disk info system
+        
+        self.DI = DI.disk_info()
 
 
 
@@ -215,6 +244,7 @@ if __name__ == "__main__":
     test.create_table('disk_table')
     test.create_table('directory_table')
     test.create_table('file_table')
+    test.find_drives()
     #test.add_columns(table_name='disk_table',columns=columns1)
     #test.delete_db(db_name = 'disk')
 

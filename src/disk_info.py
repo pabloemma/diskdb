@@ -5,7 +5,7 @@ import sys
 import platform
 import psutil as PS
 import shutil as SH
-
+from loguru import logger
 
 class disk_info(object):
     def __init__(self):
@@ -21,10 +21,10 @@ class disk_info(object):
             div = 1.e12
 
         size = tuple(map(lambda x: x /div, SH.disk_usage(disk_path)))
-        print('total size',size[0],unit)
-        print('used size',size[1],unit)
-        print('free size',size[2],unit)
-
+        logger.info("total size :{0:8.2f}   {1:s} ".format( size[0] ,  unit))
+        logger.info("used size :{0:8.2f}{1:s} ".format( size[1] ,  unit)) 
+        logger.info("free size :{0:8.2f}{1:s} ".format( size[2] ,  unit)) 
+ 
         return size
     
     def find_all_dirs(self,path=None,max_depth = 2):
@@ -76,14 +76,14 @@ class disk_info(object):
                 external_drives.append(partition.mountpoint)
                 print(partition.fstype, partition.mountpoint)
 
-        for drives in external_drives:
-            print(f"-{drives}")
+        #for drives in external_drives:
+        #    print(f"-{drives}")
         self.external_drives = external_drives 
         return      
 
     def get_dir_entries(self,path=None):
-        ''' returns directories in secelcted path'''
-        
+        ''' returns directories in selected path'''
+        print(path)
         return [item for item in os.listdir(path) if os.path.isdir(path+item)]
     
     def get_file_listing(self,path=None):
@@ -94,7 +94,7 @@ class disk_info(object):
 
 
 if __name__ == "__main__":
-    path = '/Volumes/samsung2/Backups.backupdb'
+    path = '/Volumes/samsung4/'
     #path = '/Users/klein'
     DI = disk_info()
     DI.find_drives()
