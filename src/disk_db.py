@@ -111,15 +111,9 @@ class MY_DB(object):
         sql_command = ''
         print(len(columns))
         for k in range(0,len(columns)-1,3):
-            #mycommand.append(columns[k][0]+' '+columns[k][1]+' '+columns[k][2])
             mycommand.append(columns[k]+' '+columns[k+1]+' '+columns[k+2])
 
- #       for k in range(len(mycommand)-1):
- #           sql_command =sql_command + mycommand[k] +','
- #       sql_command = sql_command+mycommand[k+1]
-
-
-        #return sql_command
+ 
         return mycommand
     
 
