@@ -136,7 +136,7 @@ class MY_DB(object):
             logger.error("table %s not known" % table_name)
            
              
-
+    
         
  #       sql_command_new = 'CREATE TABLE IF NOT EXISTS '+table_name+'  ('+self.column_command(columns)+' )'
         for k in range(len(temp)-1):
@@ -201,16 +201,55 @@ class MY_DB(object):
         logger.info('external drives %s ' % self.DI.external_drives)
         
         return
+    
+    def fill_tables(self):
+        """fills the related tables of the disk database. There are currently three tables, namely
+        disk_table: disk_id,disk_name,filesystem,size,used,free
+        dir_table: id, disk_id(connected to id from disk_table) directory,level
+        file_table: id, dir_id(connected to id from dir_table),filename,size
+        
+        
+        example:
+
+        # 1. Insert into the parent table (authors)
+        author_name = "J.K. Rowling"
+        cur.execute("INSERT INTO authors (name) VALUES (%s) RETURNING author_id;", (author_name,))
+        author_id = cur.fetchone()[0]  # Get the newly generated author_id
+
+        # 2. Insert into the child table (books) using the retrieved author_id
+        book_title_1 = "Harry Potter and the Sorcerer's Stone"
+        book_title_2 = "Harry Potter and the Chamber of Secrets"
+
+        cur.execute("INSERT INTO books (title, author_id) VALUES (%s, %s);", (book_title_1, author_id))
+        cur.execute("INSERT INTO books (title, author_id) VALUES (%s, %s);", (book_title_2, author_id))
+
+        
+        
+        """
+        disk = "samsung4"
+        fs = "afps"
+        si = "2000"
+        us = "500"
+        fr = "1500"
+        #This is just a test 
+        self.MyCurs.execute(" INSERT INTO disk_table (disk_name , filesystem , size, used, free ) VALUES (%s ,%s, %s, %s, %s ) RETURNING disk_id ;", (disk , fs ,si ,us, fr))
+        
+
+        # don't forget to commit changes to database
+        self.MyConn.commit()
+        return
+
+
 
     def get_directories(self):
         a = self.DI.get_dir_entries(path=k)
         
         return
     
-    def get_all_dirs(self,path):
+    def get_all_dirs(self,path=None):
         """finds all directories and file to max_depth"""
 
-        max_depth = self.DI.max_depth
+        max_depth = self.CD.max_depth
         myroot,dir_list,files = self.DI.find_all_dirs(path=path,max_depth=max_depth)
         return
     
@@ -241,10 +280,15 @@ if __name__ == "__main__":
     
     #columns1=[['disk_test2','varchar[30]',''],['name2','varchar[40]','NOT NULL'],['size2','NUMERIC','']]
     
-    test.create_table('disk_table')
-    test.create_table('directory_table')
-    test.create_table('file_table')
+    #test.create_table('disk_table')
+    #test.create_table('directory_table')
+    #test.create_table('file_table')
+
+    test.fill_tables()
+
+
     test.find_drives()
+    test.get_all_dirs(path='/Volumes/samsung4')
     #test.add_columns(table_name='disk_table',columns=columns1)
     #test.delete_db(db_name = 'disk')
 

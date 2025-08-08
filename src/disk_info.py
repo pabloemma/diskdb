@@ -99,7 +99,7 @@ if __name__ == "__main__":
     DI = disk_info()
     DI.find_drives()
     DI.GetSize(path)
- #   print(DI.get_dir_entries(path=path))
+    #print(DI.get_dir_entries(path=path))
     #print(DI.get_file_listing(path=path))
-    #print(DI.find_all_dirs(path=path,max_depth = 1))
+    print(DI.find_all_dirs(path=path,max_depth = 1))
 
