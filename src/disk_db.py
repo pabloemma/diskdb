@@ -14,11 +14,6 @@ class MY_DB(object):
     def __init__(self,Title =  None,db_name = None, db_user = None, db_pwd = None, db_system = None , db_host = None, config_file = None):
         super().__init__()
 
-        self.db_name    = db_name
-        self.db_user    = db_user
-        self.db_system  = db_system
-        self.db_host    = db_host
-        self.db_pwd     = db_pwd
         self.config_file = config_file
 
 
@@ -69,6 +64,7 @@ class MY_DB(object):
         try:
             MyConn = PG.connect(dbname = self.db_name, password = self.db_pwd , user = self.db_user , host = self.db_host)
             self.MyCurs = MyCurs = MyConn.cursor()
+            #MyConn.autocommit = True
 
         except:
             MyConn = PG.connect( password = self.db_pwd , user = self.db_user , host = self.db_host)
@@ -119,7 +115,7 @@ class MY_DB(object):
         return mycommand
     
 
- 
+
 
     def create_table(self,table_name = None, columns = None):
         """ create a table with 2 dimensional list columns, 
@@ -141,9 +137,9 @@ class MY_DB(object):
  #       sql_command_new = 'CREATE TABLE IF NOT EXISTS '+table_name+'  ('+self.column_command(columns)+' )'
         for k in range(len(temp)-1):
             sql_command =sql_command + temp[k] +','
-        sql_command_new ='CREATE TABLE IF NOT EXISTS '+table_name+' ( '+sql_command+temp[k+1]+' );'
+            sql_command_new ='CREATE TABLE IF NOT EXISTS '+table_name+' ( '+sql_command+temp[k+1]+' );'
         self.MyCurs.execute(sql_command_new)
-
+        
         self.MyConn.commit()
         return
     
@@ -226,14 +222,21 @@ class MY_DB(object):
         
         
         """
+        #disk = '{samsung4}'
         disk = "samsung4"
-        fs = "afps"
-        si = "2000"
-        us = "500"
-        fr = "1500"
+        fs = '{afps}'
+        si = 2000
+        us = 500
+        fr = 1500
+ 
+        sql_statement = """INSERT INTO disk_table (disk_name , filesystem , size, used, free   ) VALUES (%s , %s, %s,%s,%s )  RETURNING disk_id ;"""
+        data = (disk,fs,si,us,fr)
         #This is just a test 
-        self.MyCurs.execute(" INSERT INTO disk_table (disk_name , filesystem , size, used, free ) VALUES (%s ,%s, %s, %s, %s ) RETURNING disk_id ;", (disk , fs ,si ,us, fr))
-        
+        #self.MyCurs.execute(" INSERT INTO disk_table (disk_name , filesystem , size, used, free ) VALUES (%s ,%s, %s, %s, %s ) RETURNING disk_id ;", ({disk} , {fs} ,si ,us, fr))
+        #self.MyCurs.execute(" INSERT INTO disk_table (disk_name , filesystem , size, used, free   ) VALUES (%s , %s, %s,%s,%s ) RETURNING disk_id ;", ('{disk}' ,'{fs}',si,us,fr))
+        #self.MyCurs.execute(" INSERT INTO disk_table (disk_name , filesystem , size, used, free   ) VALUES (%s , %s, %s,%s,%s ) ;", ('{disk}' ,'{fs}',si,us,fr))
+        self.MyCurs.execute(sql_statement,data)
+        self.MyCurs.fetchone() 
 
         # don't forget to commit changes to database
         self.MyConn.commit()
@@ -261,18 +264,30 @@ class MY_DB(object):
 
         # first get configuration
         self.CD = CD.MyConfig('/Users/klein/git/diskdb/config/config_disk_db.json')
+        self.db_name    = self.CD.db_name
+        self.db_user    = self.CD.db_user
+        self.db_system  = self.CD.db_system
+        self.db_host    = self.CD.db_address
+        self.db_pwd     = self.CD.db_pwd
+
 
         #instantiate the disk info system
         
         self.DI = DI.disk_info()
 
+    def close_system(self):
+         self.MyConn.commit()
+         self.MyCurs.close()
+         self.MyConn.close()
+         logger.info('all closed')
 
 
     
 
 if __name__ == "__main__":
     db_name = 'disk'
-    test = MY_DB(db_name = db_name,db_user = 'klein',db_pwd = '?Pa!blo?solveig',db_host = '192.168.2.230' , db_system = 'PSQL')
+    #test = MY_DB(db_name = db_name,db_user = 'klein',db_host = 'localhost' , db_system = 'PSQL')
+    test = MY_DB()
     test.connect_db()
     #test.create_columns()
     #test.create_db(db_name = 'disk',db_user = 'klein')
@@ -287,9 +302,9 @@ if __name__ == "__main__":
     test.fill_tables()
 
 
-    test.find_drives()
-    test.get_all_dirs(path='/Volumes/samsung4')
+    #test.find_drives()
+    #test.get_all_dirs(path='/Volumes/samsung4')
     #test.add_columns(table_name='disk_table',columns=columns1)
     #test.delete_db(db_name = 'disk')
-
+    test.close_system()
 

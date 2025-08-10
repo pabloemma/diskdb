@@ -33,11 +33,11 @@
 
     "disk_table" : {
         "column"  : ["disk_id","SERIAL","PRIMARY KEY",
-                    "disk_name","VARCHAR[40]","NOT NULL",
-                    "filesystem","VARCHAR[5]","NOT NULL",
-                    "size","BIGINT","NOT NULL",
-                    "used","BIGINT","NOT NULL",
-                    "free","BIGINT","NOT NULL"
+                    "disk_name","VARCHAR[40]"," ",
+                    "filesystem","VARCHAR[5]"," ",
+                    "size","BIGINT"," ",
+                    "used","BIGINT"," ",
+                    "free","BIGINT"," "
                     ]
     
 
@@ -46,16 +46,16 @@
     "directory_table" : {
         "column" : ["ID","SERIAL","PRIMARY KEY",
                     "disk_id","INTEGER","REFERENCES disk_table(disk_id)",
-                    "directory","VARCHAR[80]","NOT NULL",
-                    "level","SMALLINT","NOT NULL"
+                    "directory","VARCHAR[80]"," ",
+                    "level","SMALLINT"," "
                     ]
     },
 
     "file_table" : {
         "column" : ["ID","SERIAL","PRIMARY KEY",
                     "dir_id","INTEGER","REFERENCES directory_table(ID)",
-                    "file_name","VARCHAR[100]","NOT NULL",
-                    "size_of_file","BIGINT","NOT NULL"
+                    "file_name","VARCHAR[100]"," ",
+                    "size_of_file","BIGINT"," "
 
                     ]
                 },
