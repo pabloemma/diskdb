@@ -32,6 +32,7 @@ class MY_DB(object):
                 sql_command = '''ALTER TABLE '''+table_name +' ADD COLUMN ' +temp[k]
                 print(sql_command)
                 self.MyCurs.execute(sql_command)
+                self.MyConn.commit()
                 
             
         else:
@@ -39,6 +40,17 @@ class MY_DB(object):
 
  
         return
+    
+    def alter_table(self,command):
+        """altesr the given table with the given command
+        The command has to be already ready to pass to the psycogg system
+        and is typical
+        ALTER TABLE disk_table ADD CONSTRAINT name_constraint UNIQUE ('disk_name')
+        """
+
+        self.MyCurs.execute(command)
+        self.MyConn.commit()
+
 
     def check_table_exists(self,table_name = None, schemaname = 'public'):
         """ a psql check if table exists"""
@@ -224,7 +236,7 @@ class MY_DB(object):
         """
         #disk = '{samsung4}'
         disk = "samsung4"
-        fs = '{afps}'
+        fs = "afps"
         si = 2000
         us = 500
         fr = 1500
@@ -289,6 +301,13 @@ if __name__ == "__main__":
     #test = MY_DB(db_name = db_name,db_user = 'klein',db_host = 'localhost' , db_system = 'PSQL')
     test = MY_DB()
     test.connect_db()
+
+
+    alter_command = "ALTER TABLE disk_table ADD CONSTRAINT name_constraint UNIQUE (disk_name);"
+    
+    #test.alter_table(alter_command)
+ 
+ 
     #test.create_columns()
     #test.create_db(db_name = 'disk',db_user = 'klein')
 
