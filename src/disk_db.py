@@ -47,9 +47,13 @@ class MY_DB(object):
         and is typical
         ALTER TABLE disk_table ADD CONSTRAINT name_constraint UNIQUE ('disk_name')
         """
-
-        self.MyCurs.execute(command)
-        self.MyConn.commit()
+        try:
+            self.MyCurs.execute(command)
+            self.MyConn.commit()
+        except Exception as e:
+            logger.error(e)
+        
+        return
 
 
     def check_table_exists(self,table_name = None, schemaname = 'public'):
@@ -67,6 +71,24 @@ class MY_DB(object):
 
         return
 
+    def close_system(self):
+         self.MyConn.commit()
+         self.MyCurs.close()
+         self.MyConn.close()
+         logger.info('all closed')
+
+
+
+    def column_command(self,columns):
+        mycommand = []
+        sql_command = ''
+        print(len(columns))
+        for k in range(0,len(columns)-1,3):
+            mycommand.append(columns[k]+' '+columns[k+1]+' '+columns[k+2])
+
+ 
+        return mycommand
+ 
 
     def connect_db(self,dbname = None, password = None , user = None, host = None):
         """Establish connection to database"""
@@ -116,16 +138,7 @@ class MY_DB(object):
 
         return
     
-    def column_command(self,columns):
-        mycommand = []
-        sql_command = ''
-        print(len(columns))
-        for k in range(0,len(columns)-1,3):
-            mycommand.append(columns[k]+' '+columns[k+1]+' '+columns[k+2])
-
- 
-        return mycommand
-    
+   
 
 
 
@@ -178,37 +191,7 @@ class MY_DB(object):
         self.MyCurs.execute(stat)
         return
 
-    def SetupLogger(self):
-
-
-        #logger.remove(0)
-        #now we add color to the terminal output
-        logger.add(sys.stdout,
-                colorize = True,format="<green>{time}</green>    {function}   {line}    {level}     <level>{message}</level>" ,
-                level = "DEBUG")
-
-
-
-        fmt =  "{time} - {name}-   {function} -{line}- {level}    - {message}"
-        logger.add('info.log', format = fmt , level = 'INFO',rotation="1 day")
-
-
-        # set the colors of the different levels
-        logger.level("INFO",color ='<black>')
-        logger.level("WARNING",color='<green>')
-        logger.level("ERROR",color='<red>')
-        logger.level("DEBUG",color = '<blue>')
- 
-        return
-    
-    def find_drives(self):
-        """this calls the find_drives ind disk info"""
-
-        self.DI.find_drives()
-
-        logger.info('external drives %s ' % self.DI.external_drives)
-        
-        return
+   
     
     def fill_tables(self):
         """fills the related tables of the disk database. There are currently three tables, namely
@@ -234,26 +217,37 @@ class MY_DB(object):
         
         
         """
-        #disk = '{samsung4}'
         disk = "samsung4"
         fs = "afps"
         si = 2000
         us = 500
         fr = 1500
+
+
+
  
         sql_statement = """INSERT INTO disk_table (disk_name , filesystem , size, used, free   ) VALUES (%s , %s, %s,%s,%s )  RETURNING disk_id ;"""
         data = (disk,fs,si,us,fr)
-        #This is just a test 
-        #self.MyCurs.execute(" INSERT INTO disk_table (disk_name , filesystem , size, used, free ) VALUES (%s ,%s, %s, %s, %s ) RETURNING disk_id ;", ({disk} , {fs} ,si ,us, fr))
-        #self.MyCurs.execute(" INSERT INTO disk_table (disk_name , filesystem , size, used, free   ) VALUES (%s , %s, %s,%s,%s ) RETURNING disk_id ;", ('{disk}' ,'{fs}',si,us,fr))
-        #self.MyCurs.execute(" INSERT INTO disk_table (disk_name , filesystem , size, used, free   ) VALUES (%s , %s, %s,%s,%s ) ;", ('{disk}' ,'{fs}',si,us,fr))
-        self.MyCurs.execute(sql_statement,data)
-        self.MyCurs.fetchone() 
 
-        # don't forget to commit changes to database
-        self.MyConn.commit()
+
+        try:
+            self.MyCurs.execute(sql_statement,data)
+            self.MyCurs.fetchone() 
+
+            # don't forget to commit changes to database
+            self.MyConn.commit()
+        except Exception as e:
+            logger.error(e)
         return
 
+    def find_drives(self):
+        """this calls the find_drives ind disk info"""
+
+        self.DI.find_drives()
+
+        logger.info('external drives %s ' % self.DI.external_drives)
+        
+        return
 
 
     def get_directories(self):
@@ -268,6 +262,29 @@ class MY_DB(object):
         myroot,dir_list,files = self.DI.find_all_dirs(path=path,max_depth=max_depth)
         return
     
+    def SetupLogger(self):
+
+
+        #logger.remove(0)
+        #now we add color to the terminal output
+        logger.add(sys.stdout,
+                colorize = True,format="<green>{time}</green>    {function}   {line}    {level}     <level>{message}</level>" ,
+                level = "DEBUG")
+
+
+
+        fmt =  "{time} - {name}-   {function} -{line}- {level}    - {message}"
+        logger.add('info.log', format = fmt , level = 'INFO',rotation="1 day")
+
+
+        # set the colors of the different levels
+        logger.level("INFO",color ='<black>')
+        logger.level("WARNING",color='<green>')
+        logger.level("ERROR",color='<red>')
+        logger.level("DEBUG",color = '<blue>')
+ 
+        return
+ 
 
     def SetupSystem(self):
         """instantiates and starts all the config stuff"""
@@ -287,12 +304,6 @@ class MY_DB(object):
         
         self.DI = DI.disk_info()
 
-    def close_system(self):
-         self.MyConn.commit()
-         self.MyCurs.close()
-         self.MyConn.close()
-         logger.info('all closed')
-
 
     
 
@@ -305,7 +316,7 @@ if __name__ == "__main__":
 
     alter_command = "ALTER TABLE disk_table ADD CONSTRAINT name_constraint UNIQUE (disk_name);"
     
-    #test.alter_table(alter_command)
+    test.alter_table(alter_command)
  
  
     #test.create_columns()
