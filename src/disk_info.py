@@ -53,6 +53,35 @@ class disk_info(object):
  #           dir_list.append(root)
         return root,dir_list,files
             
+    def get_max_directory_level(self,start_path):
+        """
+        Finds the maximum nesting level of subdirectories within a given path.
+
+        Args:
+        start_path (str): The root directory to start the traversal from.
+
+        Returns:
+            int: The maximum directory level found, or 0 if the path is not a directory
+             or contains no subdirectories.
+        """
+        max_level = 0
+        for root, dirs, files in os.walk(start_path):
+            # Calculate the relative path from the start_path to the current 'root'
+            relative_path = os.path.relpath(root, start_path)
+
+            # Count the number of directory separators to determine the level
+            # A relative path of '.' indicates the start_path itself, so its level is 0.
+            # Each '/' or '\' in the relative path adds one to the level.
+            if relative_path == '.':
+                current_level = 0
+            else:
+                current_level = relative_path.count(os.sep) + 1 # +1 for the first level of subdirs
+
+            if current_level > max_level:
+                max_level = current_level
+                
+        logger.info('the maximum level of the directory tree is{0:d}  '.format(max_level))
+        return max_level
 
 
 

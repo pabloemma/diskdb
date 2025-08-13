@@ -258,7 +258,10 @@ class MY_DB(object):
     def get_all_dirs(self,path=None):
         """finds all directories and file to max_depth"""
 
-        max_depth = self.CD.max_depth
+        #first get max level
+        max_depth = self.DI.get_max_directory_level(path)
+
+        #max_depth = self.CD.max_depth
         myroot,dir_list,files = self.DI.find_all_dirs(path=path,max_depth=max_depth)
         return
     
@@ -313,13 +316,11 @@ if __name__ == "__main__":
     test = MY_DB()
     test.connect_db()
 
-
-    alter_command = "ALTER TABLE disk_table ADD CONSTRAINT name_constraint UNIQUE (disk_name);"
-    
-    test.alter_table(alter_command)
+    # exapmple for altering table
+    #alter_command = "ALTER TABLE disk_table ADD CONSTRAINT name_constraint UNIQUE (disk_name);"  
+    #test.alter_table(alter_command)
  
  
-    #test.create_columns()
     #test.create_db(db_name = 'disk',db_user = 'klein')
 
     
@@ -329,11 +330,11 @@ if __name__ == "__main__":
     #test.create_table('directory_table')
     #test.create_table('file_table')
 
-    test.fill_tables()
+    #test.fill_tables()
 
 
     #test.find_drives()
-    #test.get_all_dirs(path='/Volumes/samsung4')
+    test.get_all_dirs(path='/Volumes/samsung4')
     #test.add_columns(table_name='disk_table',columns=columns1)
     #test.delete_db(db_name = 'disk')
     test.close_system()

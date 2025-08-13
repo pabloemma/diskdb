@@ -28,7 +28,7 @@
         "ingred_table" : "disk_table"
      },
      "ops"  : {
-        "max_depth" : "2"
+        "max_depth" : "10"
      },
 
     "disk_table" : {
