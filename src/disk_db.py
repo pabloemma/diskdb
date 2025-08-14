@@ -84,7 +84,7 @@ class MY_DB(object):
     def column_command(self,columns):
         mycommand = []
         sql_command = ''
-        print(len(columns))
+        logger.debug('length of column : {0:d} '.format(len(column)))
         for k in range(0,len(columns)-1,3):
             mycommand.append(columns[k]+' '+columns[k+1]+' '+columns[k+2])
 
@@ -269,24 +269,38 @@ class MY_DB(object):
         #this does not work, it always gives all the files
         # the thing to do is getting the directories and then get teh files in that directory
         # so first get all the files and then make sure they are not
-        # dir by using isfile
+        # dir by using isfile. Now the program determines the files and size. It creates a list which is always
+        # [filename1,size1,filename2,size2.....]
+
+        dir_counter = 0
         myroot,dir_list,files = self.DI.find_all_dirs(path=path,max_depth=max_depth)
         for k in myroot:
-            #print("myroot   ",k,"\n\n")
-            #time.sleep(5)
        
             for adir in dir_list:
-                # reset the file list
-                print(adir,'********')
+
+                # tis is needed for the database: it is the topdirectory and is part of the
+                # directory key
+
+                if(dir_counter == 0):
+                    logger.debug(" topdir : {0:s}" .format(adir))
+ 
+               # reset the file list
+                dir_counter=dir_counter+1
+
+
+                logger.debug(" directory: {0:s}" .format(adir))
                 myfile_list = []
+                
 
                 # now get files in this directory
                 for afile in os.listdir(adir):
                     apath = os.path.join(adir,afile)
                     if os.path.isfile(apath):
                         myfile_list.append(afile)
-                print(myfile_list)
-                print('****************************************\n\n\n')
+                        myfile_list.append(os.path.getsize(apath))
+                if (self.CD.log_level=='DEBUG'):
+                    for k in range(0,len(myfile_list)-1,2):
+                        print('file {0:30s}   filesize {1:15d}' .format(myfile_list[k],myfile_list[k+1]))
 
 
                 time.sleep(3)

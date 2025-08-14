@@ -61,7 +61,7 @@
                 },
 
      "logging" : {
-        "loglevel" : "INFO",
+        "loglevel" : "DEBUG",
         "output"   : "info.log",
         "log_conf_file" : "logger.json"
         },
