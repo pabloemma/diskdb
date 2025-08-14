@@ -8,6 +8,8 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from loguru import logger
 import config_disk_db as CD
 import disk_info as DI
+import time
+import os
 
 
 class MY_DB(object):
@@ -259,10 +261,42 @@ class MY_DB(object):
         """finds all directories and file to max_depth"""
 
         #first get max level
-        max_depth = self.DI.get_max_directory_level(path)
+        #max_depth = self.DI.get_max_directory_level(path)
+        max_depth = 4
 
+        
         #max_depth = self.CD.max_depth
+        #this does not work, it always gives all the files
+        # the thing to do is getting the directories and then get teh files in that directory
+        # so first get all the files and then make sure they are not
+        # dir by using isfile
         myroot,dir_list,files = self.DI.find_all_dirs(path=path,max_depth=max_depth)
+        for k in myroot:
+            #print("myroot   ",k,"\n\n")
+            #time.sleep(5)
+       
+            for adir in dir_list:
+                # reset the file list
+                print(adir,'********')
+                myfile_list = []
+
+                # now get files in this directory
+                for afile in os.listdir(adir):
+                    apath = os.path.join(adir,afile)
+                    if os.path.isfile(apath):
+                        myfile_list.append(afile)
+                print(myfile_list)
+                print('****************************************\n\n\n')
+
+
+                time.sleep(3)
+                
+                #for m in files:
+                #    print("files" , m)
+
+                    #time.sleep(1)
+
+
         return
     
     def SetupLogger(self):

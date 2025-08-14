@@ -38,9 +38,11 @@ class disk_info(object):
             dir_list.append(root)
         
             if current_depth <= max_depth:
-                print(f"Current directory (level {current_depth}): {root}")
+                pass
+                #print(f"Current directory (level {current_depth}): {root}")
                 for file in files:
-                    print(f"  File: {file}")
+                    #print(f"  File: {file}")
+                    pass
             else:
         # If we exceed the max_depth, prevent further recursion into subdirectories
         # by clearing the 'dirs' list. This only works if topdown=True (default).
