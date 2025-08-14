@@ -296,12 +296,12 @@ class MY_DB(object):
                 for afile in os.listdir(adir):
                     apath = os.path.join(adir,afile)
                     if os.path.isfile(apath):
-                        myfile_list.append(afile)
+                        myfile_list.append(afile.strip('\r')) #for screwed uip entries
                         myfile_list.append(os.path.getsize(apath))
                 if (self.CD.log_level=='DEBUG'):
                     for k in range(0,len(myfile_list)-1,2):
                        
-                       print('file        {0:30s}  filesize {1:15d}'.format(myfile_list[k].strip('\r'),myfile_list[k+1]))
+                       print('file        {0:30s}  filesize {1:15d}'.format(myfile_list[k],myfile_list[k+1]))
 
                 if (self.CD.log_level=='DEBUG'):
  
