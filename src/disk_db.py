@@ -262,7 +262,7 @@ class MY_DB(object):
 
         #first get max level
         #max_depth = self.DI.get_max_directory_level(path)
-        max_depth = 4
+        max_depth = 2
 
         
         #max_depth = self.CD.max_depth
@@ -273,15 +273,17 @@ class MY_DB(object):
         # [filename1,size1,filename2,size2.....]
 
         dir_counter = 0
+        data = []  # this the main table, currently it will be lists of [top,dir,level,filename,size]
         myroot,dir_list,files = self.DI.find_all_dirs(path=path,max_depth=max_depth)
         for k in myroot:
        
             for adir in dir_list:
 
-                # tis is needed for the database: it is the topdirectory and is part of the
+                # this is needed for the database: it is the topdirectory and is part of the
                 # directory key
 
                 if(dir_counter == 0):
+                    topdir = adir
                     logger.debug(" topdir : {0:s}" .format(adir))
  
                # reset the file list
@@ -298,6 +300,8 @@ class MY_DB(object):
                     if os.path.isfile(apath):
                         myfile_list.append(afile.strip('\r')) #for screwed uip entries
                         myfile_list.append(os.path.getsize(apath))
+                        temp =[topdir,adir,self.DI.level,afile.strip('\r'),os.path.getsize(apath)]
+                        data.append(temp)
                 if (self.CD.log_level=='DEBUG'):
                     for k in range(0,len(myfile_list)-1,2):
                        
@@ -305,14 +309,18 @@ class MY_DB(object):
 
                 if (self.CD.log_level=='DEBUG'):
  
-                    time.sleep(1)
+                    time.sleep(0)
                 
                 #for m in files:
                 #    print("files" , m)
 
                     #time.sleep(1)
 
+        if (self.CD.log_level=='DEBUG'):
+            for k in range(0,len(data)):
+                print(data[k])
 
+        self.disk_data = data
         return
     
     def SetupLogger(self):

@@ -34,7 +34,7 @@ class disk_info(object):
 
         for root, dirs, files in os.walk(path):
         # Calculate current depth relative to the start_path
-            current_depth = root.count(os.sep) - path.count(os.sep)
+            self.level = current_depth = root.count(os.sep) - path.count(os.sep)
             dir_list.append(root)
         
             if current_depth <= max_depth:
