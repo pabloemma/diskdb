@@ -20,7 +20,8 @@ class disk_info(object):
         if unit == 'T':
             div = 1.e12
 
-        size = tuple(map(lambda x: x /div, SH.disk_usage(disk_path)))
+        size_float = tuple(map(lambda x: x /div, SH.disk_usage(disk_path))) # size in units of G ot TB
+        size = SH.disk_usage(disk_path) #integers size
         logger.info("total size :{0:8.2f}   {1:s} ".format( size[0] ,  unit))
         logger.info("used size :{0:8.2f}{1:s} ".format( size[1] ,  unit)) 
         logger.info("free size :{0:8.2f}{1:s} ".format( size[2] ,  unit)) 
@@ -91,7 +92,7 @@ class disk_info(object):
     def find_drives(self):
         external_drives = []
         for partition in PS.disk_partitions():
-        # Heuristics for identifying external drives:
+       # Heuristics for identifying external drives:
         # - Check for 'removable' option in mount options (Linux/macOS)
         # - Check for specific device paths (e.g., /dev/sdX, /Volumes/...)
         # - Exclude common internal system partitions
@@ -105,6 +106,7 @@ class disk_info(object):
                 partition.mountpoint == '/' # Root partition
             ):
                 external_drives.append(partition.mountpoint)
+                self.fs_type = partition.fstype
                 print(partition.fstype, partition.mountpoint)
 
         #for drives in external_drives:

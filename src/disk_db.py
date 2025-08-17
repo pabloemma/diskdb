@@ -273,7 +273,7 @@ class MY_DB(object):
         # [filename1,size1,filename2,size2.....]
 
         dir_counter = 0
-        data = []  # this the main table, currently it will be lists of [top,dir,level,filename,size]
+        data = [[]]  # this the main table, currently it will be lists of [top,dir,level,filename,size]
         myroot,dir_list,files = self.DI.find_all_dirs(path=path,max_depth=max_depth)
         for k in myroot:
        
@@ -284,9 +284,41 @@ class MY_DB(object):
 
                 if(dir_counter == 0):
                     topdir = adir
+
+
+                    # get the total used and free size in integer
+                    size = self.DI.GetSize(adir)
+                    fs_type = self.DI.fs_type
+
                     logger.debug(" topdir : {0:s}" .format(adir))
- 
-               # reset the file list
+                    logger.debug("total: {0:15d}       used: {1:15d}      free: {2:15d}" .format(size[0],size[1],size[2]))
+
+                    sql_statement = """INSERT INTO disk_table (disk_name , filesystem , size, used, free   ) VALUES (%s , %s, %s,%s,%s )  RETURNING disk_id ;"""
+                    data = [adir,fs_type,size[0],size[1],size[2]]
+                    try:
+                        self.MyCurs.execute(sql_statement,data)
+                        disk_id = self.MyCurs.fetchone()[0] 
+
+                    # don't forget to commit changes to database
+                        self.MyConn.commit()
+                    except Exception as e:
+                        logger.error(e)
+                
+                sql_statement = """INSERT INTO directory_table (directory , level , disk_id  ) VALUES (%s , %s, %s )  RETURNING id ;"""
+                data1 = [adir,self.DI.level,disk_id]
+                
+                try:
+                    self.MyCurs.execute(sql_statement,data1)
+                    dir_id = self.MyCurs.fetchone()[0] 
+
+                    # don't forget to commit changes to database
+                    self.MyConn.commit()
+                except Exception as e:
+                    logger.error(e)
+
+
+              # reset the file list
+               
                 dir_counter=dir_counter+1
 
 
@@ -302,6 +334,18 @@ class MY_DB(object):
                         myfile_list.append(os.path.getsize(apath))
                         temp =[topdir,adir,self.DI.level,afile.strip('\r'),os.path.getsize(apath)]
                         data.append(temp)
+                        sql_statement = """INSERT INTO directory_table (file_name , size_of_file , dir_id  ) VALUES (%s , %s, %s ) ;"""
+                        data2 = [afile.strip('\r'),os.path.getsize(apath),dir_id]
+                        try:
+                            self.MyCurs.execute(sql_statement,data2)
+                            #disk_id = self.MyCurs.fetchone() 
+
+                        # don't forget to commit changes to database
+                            self.MyConn.commit()
+                        except Exception as e:
+                            logger.error("error in file filling")
+                            logger.error(e)
+
                 if (self.CD.log_level=='DEBUG'):
                     for k in range(0,len(myfile_list)-1,2):
                        
@@ -373,7 +417,7 @@ if __name__ == "__main__":
     #test = MY_DB(db_name = db_name,db_user = 'klein',db_host = 'localhost' , db_system = 'PSQL')
     test = MY_DB()
     test.connect_db()
-
+    test.find_drives()
     # exapmple for altering table
     #alter_command = "ALTER TABLE disk_table ADD CONSTRAINT name_constraint UNIQUE (disk_name);"  
     #test.alter_table(alter_command)
@@ -391,7 +435,6 @@ if __name__ == "__main__":
     #test.fill_tables()
 
 
-    #test.find_drives()
     test.get_all_dirs(path='/Volumes/samsung4')
     #test.add_columns(table_name='disk_table',columns=columns1)
     #test.delete_db(db_name = 'disk')
