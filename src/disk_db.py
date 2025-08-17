@@ -300,7 +300,7 @@ class MY_DB(object):
                         disk_id = self.MyCurs.fetchone()[0] 
 
                     # don't forget to commit changes to database
-                        self.MyConn.commit()
+                        #self.MyConn.commit()
                     except Exception as e:
                         logger.error(e)
                 
@@ -312,7 +312,7 @@ class MY_DB(object):
                     dir_id = self.MyCurs.fetchone()[0] 
 
                     # don't forget to commit changes to database
-                    self.MyConn.commit()
+                    #self.MyConn.commit()
                 except Exception as e:
                     logger.error(e)
 
@@ -334,14 +334,14 @@ class MY_DB(object):
                         myfile_list.append(os.path.getsize(apath))
                         temp =[topdir,adir,self.DI.level,afile.strip('\r'),os.path.getsize(apath)]
                         data.append(temp)
-                        sql_statement = """INSERT INTO directory_table (file_name , size_of_file , dir_id  ) VALUES (%s , %s, %s ) ;"""
+                        sql_statement = """INSERT INTO file_table (file_name , size_of_file , dir_id  ) VALUES (%s , %s, %s )  RETURNING id ;"""
                         data2 = [afile.strip('\r'),os.path.getsize(apath),dir_id]
                         try:
                             self.MyCurs.execute(sql_statement,data2)
                             #disk_id = self.MyCurs.fetchone() 
 
                         # don't forget to commit changes to database
-                            self.MyConn.commit()
+                            #self.MyConn.commit()
                         except Exception as e:
                             logger.error("error in file filling")
                             logger.error(e)
@@ -363,6 +363,9 @@ class MY_DB(object):
         if (self.CD.log_level=='DEBUG'):
             for k in range(0,len(data)):
                 print(data[k])
+        
+        
+        self.MyConn.commit()
 
         self.disk_data = data
         return
