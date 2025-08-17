@@ -305,7 +305,24 @@ class MY_DB(object):
                         logger.error(e)
                 
                 sql_statement = """INSERT INTO directory_table (directory , level , disk_id  ) VALUES (%s , %s, %s )  RETURNING id ;"""
-                data1 = [adir,self.DI.level,disk_id]
+                # proble: sef.DI.levele gives you the last level before DI finished. I need to compute the level
+                # for the actula director.
+
+                relative_path = os.path.relpath(adir, topdir)
+
+                # Count the number of directory separators to determine the level
+                # A relative path of '.' indicates the start_path itself, so its level is 0.
+                # Each '/' or '\' in the relative path adds one to the level.
+                if relative_path == '.':
+                    current_level = 0
+                else:
+                    current_level = relative_path.count(os.sep) + 1 # +1 for the first level of subdirs
+
+
+
+
+
+                data1 = [adir,current_level,disk_id]
                 
                 try:
                     self.MyCurs.execute(sql_statement,data1)
