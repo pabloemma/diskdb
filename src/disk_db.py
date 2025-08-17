@@ -261,8 +261,8 @@ class MY_DB(object):
         """finds all directories and file to max_depth"""
 
         #first get max level
-        #max_depth = self.DI.get_max_directory_level(path)
-        max_depth = 2
+        max_depth = self.DI.get_max_directory_level(path)
+        #max_depth = 2
 
         
         #max_depth = self.CD.max_depth
