@@ -84,7 +84,7 @@ class MY_DB(object):
     def column_command(self,columns):
         mycommand = []
         sql_command = ''
-        logger.debug('length of column : {0:d} '.format(len(column)))
+        logger.debug('length of column : {0:d} '.format(len(columns)))
         for k in range(0,len(columns)-1,3):
             mycommand.append(columns[k]+' '+columns[k+1]+' '+columns[k+2])
 
@@ -448,9 +448,9 @@ if __name__ == "__main__":
     
     #columns1=[['disk_test2','varchar[30]',''],['name2','varchar[40]','NOT NULL'],['size2','NUMERIC','']]
     
-    #test.create_table('disk_table')
-    #test.create_table('directory_table')
-    #test.create_table('file_table')
+    test.create_table('disk_table')
+    test.create_table('directory_table')
+    test.create_table('file_table')
 
     #test.fill_tables()
 
