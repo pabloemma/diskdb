@@ -15,7 +15,7 @@ import os
 class MY_DB(object):
     def __init__(self,Title =  None,db_name = None, db_user = None, db_pwd = None, db_system = None , db_host = None, config_file = None):
         super().__init__()
-
+        self.startup_time = time.time()
         self.config_file = config_file
 
 
@@ -77,6 +77,8 @@ class MY_DB(object):
          self.MyConn.commit()
          self.MyCurs.close()
          self.MyConn.close()
+         self.end_time = time.time()
+         logger.info("it took {0:f}  seconds ".format(self.end_time-self.startup_time))
          logger.info('all closed')
 
 
@@ -261,8 +263,8 @@ class MY_DB(object):
         """finds all directories and file to max_depth"""
 
         #first get max level
-        max_depth = self.DI.get_max_directory_level(path)
-        #max_depth = 2
+        #max_depth = self.DI.get_max_directory_level(path)
+        max_depth = 5
 
         
         #max_depth = self.CD.max_depth
@@ -276,7 +278,8 @@ class MY_DB(object):
         data = [[]]  # this the main table, currently it will be lists of [top,dir,level,filename,size]
         myroot,dir_list,files = self.DI.find_all_dirs(path=path,max_depth=max_depth)
         for k in myroot:
-       
+            if(k != '/'):       #stupid short kludge
+                break
             for adir in dir_list:
 
                 # this is needed for the database: it is the topdirectory and is part of the
@@ -362,6 +365,7 @@ class MY_DB(object):
                         except Exception as e:
                             logger.error("error in file filling")
                             logger.error(e)
+                self.MyConn.commit()
 
                 if (self.CD.log_level=='DEBUG'):
                     for k in range(0,len(myfile_list)-1,2):
@@ -382,7 +386,6 @@ class MY_DB(object):
                 print(data[k])
         
         
-        self.MyConn.commit()
 
         self.disk_data = data
         return
@@ -394,7 +397,7 @@ class MY_DB(object):
         #now we add color to the terminal output
         logger.add(sys.stdout,
                 colorize = True,format="<green>{time}</green>    {function}   {line}    {level}     <level>{message}</level>" ,
-                level = "DEBUG")
+                level = "INFO")
 
 
 
@@ -414,7 +417,7 @@ class MY_DB(object):
     def SetupSystem(self):
         """instantiates and starts all the config stuff"""
 
-        logger.info('starting up system')
+
 
         # first get configuration
         self.CD = CD.MyConfig('/Users/klein/git/diskdb/config/config_disk_db.json')
@@ -423,6 +426,11 @@ class MY_DB(object):
         self.db_system  = self.CD.db_system
         self.db_host    = self.CD.db_address
         self.db_pwd     = self.CD.db_pwd
+
+        # set logger level
+        logger.info('starting up system')
+        logger.remove()
+        logger.add(sys.stderr, level=self.CD.log_level)
 
 
         #instantiate the disk info system
@@ -455,7 +463,7 @@ if __name__ == "__main__":
     #test.fill_tables()
 
 
-    test.get_all_dirs(path='/Volumes/samsung4')
+    test.get_all_dirs(path='/Volumes/samsung1')
     #test.add_columns(table_name='disk_table',columns=columns1)
     #test.delete_db(db_name = 'disk')
     test.close_system()

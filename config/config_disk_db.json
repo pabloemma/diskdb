@@ -28,7 +28,7 @@
         "ingred_table" : "disk_table"
      },
      "ops"  : {
-        "max_depth" : "10"
+        "max_depth" : "5"
      },
 
     "disk_table" : {
@@ -61,7 +61,7 @@
                 },
 
      "logging" : {
-        "loglevel" : "INFO",
+        "loglevel" : "DEBUG",
         "output"   : "info.log",
         "log_conf_file" : "logger.json"
         },
