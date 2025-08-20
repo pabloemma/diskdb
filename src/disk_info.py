@@ -126,9 +126,17 @@ class disk_info(object):
         return [item for item in os.listdir(path) if os.path.isfile(path+'/'+item)]
 
     def get_disk_name(self,path):
-        # this is for mac
-        disk_name = NSFileManager.defaultManager().displayNameAtPath_(path)
-        return disk_name
+
+        if sys.platform == 'darwin':
+            # this is for mac
+            disk_name = NSFileManager.defaultManager().displayNameAtPath_(path)
+            return disk_name
+        else:
+            logger.error("cannot get the operating system,only mac works so far")
+            return
+        
+
+
 if __name__ == "__main__":
     path = '/Volumes/samsung1/'
     #path = '/Users/klein'
