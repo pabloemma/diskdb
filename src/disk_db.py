@@ -187,6 +187,17 @@ class MY_DB(object):
 
         return temp_column
 
+
+    def delete_all_tables(self):
+        answer = input("WARNING: you are about to delete all tables, answer with Yes ")
+        if(answer == 'Yes'):
+            self.delete_table(table_name = 'file_table')
+            self.delete_table(table_name = 'directory_table')
+            self.delete_table(table_name = 'disk_table')
+        else:
+            logger.info("You have to spell out Yes for the tables to be deleted")
+        return
+
     def delete_db(self,db_name = None):
 
         stat = '''DROP DATABASE IF EXISTS '''+db_name 
@@ -195,7 +206,18 @@ class MY_DB(object):
         self.MyCurs.execute(stat)
         return
 
-   
+
+
+
+
+    def delete_table(self,table_name = None):
+
+        sql_statement = 'DROP TABLE '+ table_name+ ' Cascade;'
+        self.MyCurs.execute(sql_statement)
+
+            # don't forget to commit changes to database
+        self.MyConn.commit()
+        return
     
     def fill_tables(self):
         """fills the related tables of the disk database. There are currently three tables, namely
@@ -255,7 +277,7 @@ class MY_DB(object):
 
 
     def get_directories(self):
-        a = self.DI.get_dir_entries(path=k)
+        a = self.DI.get_dir_entries(path=None)
         
         return
     
@@ -452,8 +474,7 @@ if __name__ == "__main__":
  
  
     #test.create_db(db_name = 'disk',db_user = 'klein')
-
-    
+    test.delete_all_tables()    
     #columns1=[['disk_test2','varchar[30]',''],['name2','varchar[40]','NOT NULL'],['size2','NUMERIC','']]
     
     test.create_table('disk_table')
@@ -463,7 +484,7 @@ if __name__ == "__main__":
     #test.fill_tables()
 
 
-    test.get_all_dirs(path='/Volumes/samsung1')
+    test.get_all_dirs(path='/Volumes/Media')
     #test.add_columns(table_name='disk_table',columns=columns1)
     #test.delete_db(db_name = 'disk')
     test.close_system()

@@ -92,7 +92,7 @@ class disk_info(object):
 
     def find_drives(self):
         external_drives = []
-        for partition in PS.disk_partitions():
+        for partition in PS.disk_partitions(all=False):
        # Heuristics for identifying external drives:
         # - Check for 'removable' option in mount options (Linux/macOS)
         # - Check for specific device paths (e.g., /dev/sdX, /Volumes/...)
@@ -101,6 +101,8 @@ class disk_info(object):
                 partition.mountpoint.startswith('/Volumes/') or  # macOS
                 partition.device.startswith('/dev/sd') # Linux, often external
             ) and not (
+                partition.mountpoint.startswith('/Volumes/Recovery') or  # macOS
+
                 partition.mountpoint.startswith('/boot') or
                 partition.mountpoint.startswith('/sys') or
                 partition.mountpoint.startswith('/proc') or
@@ -138,7 +140,7 @@ class disk_info(object):
 
 
 if __name__ == "__main__":
-    path = '/Volumes/samsung1/'
+    path = '/Volumes/Media/'
     #path = '/Users/klein'
     DI = disk_info()
     DI.find_drives()
