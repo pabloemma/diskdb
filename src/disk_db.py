@@ -281,9 +281,19 @@ class MY_DB(object):
         
         return
     
+    def get_everyting(self):
+        """loops over all the top partitions"""
+
+        all_my_partitions = path=self.DI.external_drives()
+        for m in all_my_partitions:
+            self.get_all_dirs(m)
+
+        return
+
     def get_all_dirs(self,path=None):
         """finds all directories and file to max_depth"""
-
+        if path == None:
+            path=self.DI.external_drives[0]  # only the first partition
         #first get max level
         max_depth = self.DI.get_max_directory_level(path)
         #max_depth = 5
@@ -484,7 +494,9 @@ if __name__ == "__main__":
     #test.fill_tables()
 
 
-    test.get_all_dirs(path='/Volumes/Media')
+    # 
+    #test.get_all_dirs(path='/Volumes/Media')
+    test.get_all_dirs(path=None )
     #test.add_columns(table_name='disk_table',columns=columns1)
     #test.delete_db(db_name = 'disk')
     test.close_system()
