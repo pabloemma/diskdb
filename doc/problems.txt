@@ -1,0 +1,35 @@
+
+8/18/2025
+Still have problems. It always has the same directory name (latest backup)
+I don't knoiw if it does not adavance the directory or if it just has the name persistent.
+
+8/19 Itr is the fugging mac. Finder shows you all the backups but in terminal you only get the latest.
+So this is a real problem. called apple, they did not help.
+So will try to use a usb stick without backup.
+
+using samsung1
+still having problems. It seems like it is going over the whole thing several times.
+it did it 9 times: Solved; it was iterating through all the directoris at the top level, so it did it all over again.
+
+The relationships beween directory and filenames is wrong. If I do a search for a specific
+filename, expecting it to just give me the directory it found it in, it comes back with all the directorise, even ones where Thefile is not in. However, this must 
+be the problem of my query. If I look at the file and directory table, the files ar assigned the correct directory_id
+
+It looks like the tables are correctly linked but the libreoffice does not work with wildcards.
+I just have to abandon stupid libreoffice. 
+
+What is still needed:
+
+I think the disks are not unique yet. It elts me ad more entries with the same name
+Take the path from the found disks and not add it by hand
+
+Write GUI interface
+Create queries with pyside6
+
+
+
+
+
+
+
+
