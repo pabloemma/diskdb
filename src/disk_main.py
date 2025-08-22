@@ -79,7 +79,7 @@ class CalMain(QMainWindow):
         menu = self.menuBar()
 
         file_menu = menu.addMenu("&Action")
-
+        maintenance_menu = menu.addMenu("database maintenance")
      
    # Create a " config" action
         config_action = QAction( " Config File", self)
@@ -88,11 +88,28 @@ class CalMain(QMainWindow):
         config_action.triggered.connect(self.SetupConfigNew)
         file_menu.addAction(config_action)
 
+
    # Create a " connect db" action
         db_action = QAction( " Connect Database", self)
         db_action.setStatusTip("connect database ")
         db_action.triggered.connect(self.connect_db)
         file_menu.addAction(db_action)
+
+
+   # Create a " Scan disk" action
+        sd_action = QAction( " Scan Disk", self)
+        sd_action.setStatusTip("Scan Disk ")
+        sd_action.triggered.connect(self.scan_disk)
+        file_menu.addAction(sd_action)
+
+
+     # Create a " Delete all tables" action
+        dt_action = QAction( " Delete All Tables", self)
+        dt_action.setStatusTip("Delete database tables ")
+        dt_action.triggered.connect(self.delete_tables)
+        maintenance_menu.addAction(dt_action)
+
+
 
         #instantiate configuration
         
@@ -194,6 +211,20 @@ class CalMain(QMainWindow):
 
 
 
+    def scan_disk(self):
+
+        # get the disks
+        self.DB.find_drives()
+
+
+        self.DB.get_everyting()
+
+        return
+    
+    def delete_tables(self):
+
+        self.DB.delete_all_tables()
+
         return
     
 
@@ -225,6 +256,21 @@ class CalMain(QMainWindow):
         #reset self.config_file, so we can change it through the menu
         #self.config_file = None
 
+                # now make connection
+        self.DB = DB.MY_DB("My Disk Connection",
+                                db_name=self.CM.db_name,
+                                db_user = self.CM.db_user,
+                                 db_system = self.CM.db_system ,
+                                 db_pwd = self.CM.db_pwd,
+                                 db_host = self.CM.db_address,
+                                 config_file = self.config_file
+                                 )
+        self.DB.connect_db()
+
+
+
+
+
 
     def SetupConfigNew(self):
         """ gest called when one ants to read in a new config file"""
@@ -248,12 +294,15 @@ class CalMain(QMainWindow):
         #reset self.config_file, so we can change it through the menu
         #self.config_file = None
 
+
+
+
    
  
     def SetupLogger(self):
 
 
-        logger.remove(0)
+        #logger.remove(0)
         #now we add color to the terminal output
         logger.add(sys.stdout,
                 colorize = True,format="<green>{time}</green>    {function}   {line}    {level}     <level>{message}</level>" ,
