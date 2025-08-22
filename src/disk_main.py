@@ -33,6 +33,10 @@ from PySide6.QtWidgets import (QApplication,
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtUiTools import QUiLoader
 
+from PySide6.QtSql import (QSqlRelation, 
+                            QSqlRelationalTableModel,
+                            QSqlDatabase)
+
 
 
 loader = QUiLoader()
@@ -215,6 +219,11 @@ class CalMain(QMainWindow):
         return
 
 
+    def show_tables(self):
+        """ works on all related tables"""
+        self.qsql_model = self.model = QSqlRelationalTableModel(db=self.db_qsql)
+        return
+
 
     def scan_disk(self):
 
@@ -266,6 +275,14 @@ class CalMain(QMainWindow):
                                  config_file = self.config_file
                                  )
         self.DB.connect_db()
+
+        # here db connection for pyside6
+        self.db_qsql = QSqlDatabase('QPSQL')
+        self.db_qsql.setHostName(self.CM.db_address)
+        self.db_qsql.setDatabaseName(self.CM.db_name,)
+        self.db_qsql.setUserName(self.CM.db_user)
+        self.db_qsql.setPassword(self.CM.db_pwd)
+        self.db_qsql.open()
 
 
 
@@ -330,5 +347,6 @@ if __name__ == "__main__":
     app = QApplication([])
     config_file = '/Users/klein/git/diskdb/config/config_disk_db.json'
     window = CalMain(config_file = config_file )
+    window.show_tables()
     window.show()
     app.exec()
