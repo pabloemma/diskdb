@@ -21,7 +21,11 @@ I just have to abandon stupid libreoffice.
 What is still needed:
 
 I think the disks are not unique yet. It let's me add more entries with the same name
-Take the path from the found disks and not add it by hand
+Take the path from the found disks and not add it by hand : done
+
+
+
+Next steps:
 
 Write GUI interface
 Create queries with pyside6
