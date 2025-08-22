@@ -282,7 +282,7 @@ class MY_DB(object):
         return
     
     def get_everyting(self):
-        """loops over all the top partitions"""
+        """loops over all the top partitions and then calls get_all_dirs"""
 
         all_my_partitions = self.DI.external_drives
         for m in all_my_partitions:
@@ -497,7 +497,10 @@ if __name__ == "__main__":
     # 
     #test.get_all_dirs(path='/Volumes/Media')
     #test.get_all_dirs(path=None )
+
     test.get_everyting()
+
+
     #test.add_columns(table_name='disk_table',columns=columns1)
     #test.delete_db(db_name = 'disk')
     test.close_system()
