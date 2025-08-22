@@ -208,6 +208,11 @@ class CalMain(QMainWindow):
         self.CM.db_pwd = self.DBD.password_edit.text()  
         return
 
+    def delete_tables(self):
+
+        self.DB.delete_all_tables()
+
+        return
 
 
 
@@ -221,11 +226,6 @@ class CalMain(QMainWindow):
 
         return
     
-    def delete_tables(self):
-
-        self.DB.delete_all_tables()
-
-        return
     
 
 
