@@ -29,12 +29,15 @@ from PySide6.QtWidgets import (QApplication,
                                 QMenu,
                                 QPushButton,
                                 QVBoxLayout,
+                                QTableView,
                                 QWidget)
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtUiTools import QUiLoader
+from PySide6.QtCore import QSize, Qt
 
 from PySide6.QtSql import (QSqlRelation, 
                             QSqlRelationalTableModel,
+                            QSqlTableModel,
                             QSqlDatabase)
 
 
@@ -52,7 +55,7 @@ class database_dialog(QDialog,Ui_db_dialog):
 
 
 
-class CalMain(QMainWindow):
+class DiskMain(QMainWindow):
     def __init__(self,config_file = None):
         super().__init__()
 
@@ -221,7 +224,25 @@ class CalMain(QMainWindow):
 
     def show_tables(self):
         """ works on all related tables"""
+        self.table_view = QTableView()
         self.qsql_model = self.model = QSqlRelationalTableModel(db=self.db_qsql)
+        #self.qsql_model = self.model = QSqlTableModel(db=self.db_qsql)
+        self.table_view.setModel(self.qsql_model)
+
+        self.qsql_model.setTable("directory_table")
+
+        
+        # here we connect the directory table to the disk_table, column 1 (counting from 0) in the directory_table connects to the disk_id
+        self.qsql_model.setRelation(1,QSqlRelation("disk_table","disk_id","disk_name"))
+        self.qsql_model.setRelation(0,QSqlRelation("file_table","dir_id","file_name"))
+        
+        self.qsql_model.select()
+
+
+        self.setMinimumSize(QSize(1024, 600))
+        self.setCentralWidget(self.table_view)
+        #self.table_view.show()
+
         return
 
 
@@ -346,7 +367,7 @@ class CalMain(QMainWindow):
 if __name__ == "__main__":
     app = QApplication([])
     config_file = '/Users/klein/git/diskdb/config/config_disk_db.json'
-    window = CalMain(config_file = config_file )
+    window = DiskMain(config_file = config_file )
     window.show_tables()
     window.show()
     app.exec()
